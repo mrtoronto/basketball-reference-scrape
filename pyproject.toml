@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basketball-reference-scraper"
+version = "0.1.0"
+description = "Simple CLI and library to scrape Basketball Reference players and game logs"
+requires-python = ">=3.9"
+authors = [{ name = "Matt" }]
+readme = "README.md"
+license = { text = "MIT" }
+
+[project.urls]
+Homepage = "https://www.basketball-reference.com"
+
+[project.scripts]
+br-scraper = "scraper.scraper:main"
+
+[tool.setuptools]
+license-files = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scraper*"]
+exclude = []
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=6",
+]
+

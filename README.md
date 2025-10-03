@@ -1,52 +1,50 @@
 # Basketball Reference Scraper
 
-Simple command line helper for scraping player lists and individual box score logs from [Basketball Reference](https://www.basketball-reference.com/).
+Command‑line helper to pull player lists and game logs from Basketball Reference.
 
-## Requirements
+## Get started
 
-* Python 3.9+
-* Standard library only (no third-party packages required)
-
-The script relies on `urllib` from the Python standard library to download HTML and a tiny `HTMLParser` helper to read table data. Every request sends a desktop browser user-agent string to stay polite to the website.
-
-## Usage
-
-Run the script with `python scraper.py <command> [options]`.
-
-### 1. Download per-game stats for a season
+1) Create a virtual env and install
 
 ```
-python scraper.py players --season 2024 --output players_2024.csv
+uv venv
+uv pip install -e '.[dev]'
 ```
 
-* `--season` is the season year used by Basketball Reference (e.g. `2024` corresponds to the 2023‑24 season). If omitted, the script automatically discovers the most recent season available on the site.
-* `--output` is optional. When skipped, the file is written as `players_<season>.csv`.
-
-The CSV contains every column shown on the per-game stats page, one row per player/team combination.
-
-### 2. Download the last N game logs for one or more players
+2) Pull some data (season year is when the season ends; 2024 = 2023–24)
 
 ```
-python scraper.py game-logs jamesle01 doncilo01 --season 2024 --last 15 --output-dir game_logs
+# Look up a player's ID by name
+uv run br-scraper lookup "LeBron James"
+
+# Last 15 games for a couple players → CSVs in ./game_logs
+uv run br-scraper game-logs jamesle01 doncilu01 --season 2024 --last 15 --output-dir game_logs
+
+# All games for many players → one combined CSV
+uv run br-scraper game-logs --input-file ids.txt --season 2024 --all-games --combined-output all_logs_2024.csv
+
+# Per‑game stats for a season
+uv run br-scraper players --season 2024 --output players_2024.csv
 ```
 
-* Provide one or more Basketball Reference player IDs (the part of their player URL, e.g. `jamesle01`).
-* `--season` and `--last` behave like above (defaults: latest season and 15 games).
-* A separate CSV is written for each player to the chosen output directory (defaults to `./game_logs`).
+Tip: A player ID is the end of their profile URL. Example `https://www.basketball-reference.com/players/j/jamesle01.html` → `jamesle01`. Make an `ids.txt` with one ID per line; `#` starts a comment.
 
-Each CSV mirrors the basic game log table, trimmed to the last N games of that season for the player.
-
-## Testing the scraper
-
-Simple integration tests prove that Basketball Reference can be scraped. Run them with:
+## Use from Python (optional)
 
 ```
-python -m unittest discover
+import scraper
+rows = scraper.scrape_player_game_logs("jamesle01", 2024, last_n=15)
 ```
 
-The tests download live data and will skip automatically if the network is unavailable or the site cannot be reached. They will fail if the site layout changes.
+The notebook `notebooks/demo.ipynb` shows end‑to‑end examples.
+
+## Tests
+
+```
+uv run python -m unittest discover
+```
 
 ## Notes
 
-* Respect Basketball Reference's terms of use and avoid making excessive requests.
-* The script only fetches the “Basic” game log table (`pgl_basic`). If you need advanced stats you can extend `scrape_player_game_logs` to read a different table id.
+- Be polite. Keep request volume reasonable and follow the site's terms.
+- This reads the basic game log table. Extend `scrape_player_game_logs` if you need different tables.
