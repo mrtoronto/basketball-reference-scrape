@@ -4,14 +4,19 @@ Command‑line helper to pull player lists and game logs from Basketball Referen
 
 ## Get started
 
-1) Create a virtual env and install
+1) MacOS Setup
 
 ```
-uv venv
-uv pip install -e '.[dev]'
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-2) Pull some data (season year is when the season ends; 2024 = 2023–24)
+2) Install dependencies
+
+```
+uv sync
+```
+
+3) Pull some data (season year is when the season ends; 2024 = 2023–24)
 
 ```
 # Look up a player's ID by name
