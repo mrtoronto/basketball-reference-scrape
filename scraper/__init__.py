@@ -21,3 +21,4 @@ __all__ = [
     "search_player_ids",
     "write_csv",
 ]
+
